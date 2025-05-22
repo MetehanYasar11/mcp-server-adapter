@@ -48,7 +48,7 @@ PROTOCOL_VERSION = "2024-03-26"
 
 # --- STDIO/REST shared logic ---
 def get_manifest() -> Dict[str, Any]:
-    return MANIFEST
+    return {"tools": MANIFEST["tools"]}
 
 def get_initialize_response() -> Dict[str, Any]:
     return {
@@ -159,7 +159,7 @@ async def http_execute(request: Request):
 @app.api_route("/tools/list", methods=["POST"])
 @app.api_route("/tools/list/", methods=["POST"])
 async def http_tools_list():
-    return {"tools": get_manifest()["tools"]}
+    return get_manifest()
 
 @app.post("/tools/call")
 async def http_tools_call(request: Request):
