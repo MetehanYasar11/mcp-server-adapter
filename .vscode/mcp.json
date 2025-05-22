@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "vision-http": {
+      "type": "http",
+      "url": "http://127.0.0.1:3000"
+    },
+    "vision-stdio": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["C:/Users/maspe/Desktop/cookbook/vision-mcp/mcp_vision_adapter/main.py"]
+    }
+  }
+}
