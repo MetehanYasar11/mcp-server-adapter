@@ -1,0 +1,1 @@
+{"id": 1, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}

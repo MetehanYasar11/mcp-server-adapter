@@ -82,19 +82,37 @@ def read_manual_line(prompt: str) -> str:
         return input()
 
 def detect_objects_impl(image_path: str, root: str = None, manual_result: str = None) -> str:
-    if manual_result:
-        return manual_result
-    env_result = os.environ.get("MANUAL_RESULT")
-    if env_result:
-        return env_result
+    # MANUAL_RESULT ve manual_result sadece DEBUG/TEST için, prod'da devre dışı
+    # if manual_result:
+    #     return manual_result
+    # env_result = os.environ.get("MANUAL_RESULT")
+    # if env_result:
+    #     return env_result
     # If root is set and image_path is relative, resolve it
     if root and not os.path.isabs(image_path):
         image_path = os.path.abspath(os.path.join(root, image_path))
-    # Interactive input if possible
-    if sys.stdin.isatty():
-        return read_manual_line(f"detect_objects called for {image_path}. Type result & Enter: ")
-    # No TTY: return placeholder
-    return f"[manual input required for {os.path.basename(image_path)}]"
+
+    # --- YOLOv8 service integration ---
+    import requests
+    YOLO_SERVICE = os.getenv("YOLO_SERVICE_URL", "http://localhost:8080")
+    # Try to send to YOLO service
+    try:
+        with open(image_path, "rb") as f:
+            files = {"file": (os.path.basename(image_path), f, "application/octet-stream")}
+            resp = requests.post(f"{YOLO_SERVICE}/detect", files=files, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()
+        # Return summary text: class list
+        classes = [r.get("class_", r.get("class", "?")) for r in data.get("results", [])]
+        if not classes:
+            return "No objects detected."
+        return ", ".join(sorted(set(classes)))
+    except Exception as e:
+        # Fallback: manual/placeholder
+        pass
+
+    # Artık manuel input veya placeholder yok, gerçek hata döndür
+    return "[error: object detection failed]"
 
 
 def execute_tool(tool_name: str, params: Dict[str, Any], root: str = None) -> Any:

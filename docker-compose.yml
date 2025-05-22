@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  yolo:
+    build: ./yolov8_service
+    ports: [ "8080:8080" ]
+    volumes:
+      - ./models:/weights
+  adapter:
+    build: .
+    environment:
+      YOLO_SERVICE_URL: http://yolo:8080
+    ports: [ "3000:3000" ]
+    depends_on: [ yolo ]

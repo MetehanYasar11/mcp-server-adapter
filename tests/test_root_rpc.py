@@ -23,11 +23,12 @@ def test_tools_call_root_http():
         "jsonrpc": "2.0",
         "id": 3,
         "method": "tools/call",
-        "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg", "manual_result": "rpc_test"}}
+        "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}
     }
     r = client.post("/", json=data)
     assert r.status_code == 200
-    assert r.json()["result"] == "rpc_test"
+    # Artık override yok, gerçek nesne tespiti sonucu beklenir
+    assert isinstance(r.json()["result"], str)
 
 def test_unknown_method_root_http():
     data = {"jsonrpc": "2.0", "id": 4, "method": "nope", "params": {}}

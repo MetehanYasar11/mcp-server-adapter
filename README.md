@@ -2,49 +2,52 @@
 
 A minimal MCP adapter for VS Code Copilot Agent Mode (REST + STDIO).
 
+
 ## Quick Start
 
+### Docker Compose (YOLOv8 + Adapter)
+```powershell
+docker-compose up --build
+```
 
+- YOLOv8 service: [http://localhost:8080](http://localhost:8080)
+- Adapter: [http://localhost:3000](http://localhost:3000)
+
+#### Test YOLOv8 service
+```powershell
+curl -F file=@test.jpg http://localhost:8080/detect
+```
+
+#### Test Adapter (proxies to YOLO)
+```powershell
+curl -X POST http://localhost:3000/execute -H "Content-Type: application/json" -d '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
+```
 
 ### STDIO mode
 ```
 python -m mcp_vision_adapter.main
 ```
 
-- **JSON-RPC 2.0:** Tüm STDIO yanıtları artık `{ "jsonrpc": "2.0", "id": <istek_id>, ... }` formatında döner. Hatalar da aynı şekilde JSON-RPC error objesiyle döner.
-- On Windows, if prompted for manual input, type your answer and press Enter. If `/dev/tty` is unavailable, the adapter will use a Windows-compatible fallback (character input or stdin).
-- Input/output is newline-delimited JSON (one JSON object per line, per MCP spec).
-
 ### HTTP/SSE mode
 ```
 uvicorn mcp_vision_adapter.main:app --port 3000
 ```
 
-- Endpoints: `/` (root JSON-RPC), `/initialize`, `/manifest`, `/execute` (legacy), `/tools/list`, `/tools/call`, `/sse`, `/ui`
-- `/` (POST): Universal JSON-RPC endpoint. Accepts `{ "jsonrpc": "2.0", "id": 1, "method": "tools/list", ... }` etc. Used by VS Code MCP Agent Mode.
-- `/ui`: Tiny browser test UI for manual tool calls. You can enter both `image_path` and `manual_result` (optional override).
-- `/ui` is a minimal HTML page for quick manual testing.
-- If neither `manual_result` nor `MANUAL_RESULT` env is set and the adapter is not running in a TTY (e.g. Uvicorn), it returns a placeholder string instead of blocking for input.
-- See `.vscode/mcp.json` for VS Code integration.
+---
 
-**Note:** The `tools/list` response is now wrapped in `{ "tools": [...] }` as required by VS Code’s MCP preview. (Older versions returned a bare list.)
+## YOLOv8 Microservice
 
-## Testing
+See [`yolov8_service/README.md`](yolov8_service/README.md) for endpoints, Docker usage, and time slicing params.
 
-
+**Mount your models:**
+```powershell
+docker run -v ${PWD}/models:/weights ...
 ```
-pip install fastapi uvicorn pytest
-pytest -q
-```
+Default weights: `/weights/yolov8n.pt`
 
-Tests:
-- `test_manifest.py`: manifest and schema keys
-- `test_exec_env.py`: HTTP execute with env var
-- `test_stdio_exec.py`: STDIO mode, env var/manual input
-- `test_sse_ping.py`: SSE endpoint emits listChanged
-- `test_root_rpc.py`: root JSON-RPC endpoint (`/`) for initialize, tools/list, tools/call, error
+---
 
-## VS Code Integration
+## VS Code MCP Integration
 
 Sample `.vscode/mcp.json`:
 ```jsonc
@@ -63,12 +66,28 @@ Sample `.vscode/mcp.json`:
 }
 ```
 
-After saving, use *Command Palette → “MCP: List Servers”* to start/connect.
+---
+
+## Testing
+
+```powershell
+pip install fastapi uvicorn pytest
+pytest -q
+```
+
+Tests:
+- `test_service_detect.py`: YOLOv8 service (direct)
+- `test_adapter_proxy.py`: Adapter → YOLOv8 service
+- All existing adapter tests remain green
+
+---
 
 ## Notes
 
-- STDIO: Each request/response is a single line of JSON. No extra whitespace.
-- Windows: If `/dev/tty` is not available, the adapter will prompt using Windows console input.
+- For video, use `start`/`end` (e.g. `?start=2s&end=5s`) or `frame` for slicing.
+- If neither `manual_result` nor `MANUAL_RESULT` env is set and the adapter is not running in a TTY, it returns a placeholder string.
+
+---
 
 ### Port Clash
 

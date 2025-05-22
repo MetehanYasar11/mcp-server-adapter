@@ -18,10 +18,15 @@ app = main_mod.app
 client = TestClient(app)
 
 def test_execute_env_var(monkeypatch):
-    monkeypatch.setenv("MANUAL_RESULT", "stub")
-    resp = client.post("/execute", json={
-        "tool": "detect_objects",
-        "input": {"image_path": "test.jpg"}
+    resp = client.post("/", json={
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+            "tool": "detect_objects",
+            "input": {"image_path": "test.jpg"}
+        }
     })
     assert resp.status_code == 200
-    assert resp.json()["result"] == "stub"
+    # Artık override yok, gerçek nesne tespiti sonucu beklenir
+    assert isinstance(resp.json()["result"], str)

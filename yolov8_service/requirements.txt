@@ -1,0 +1,6 @@
+ultralytics==8.*
+fastapi
+uvicorn[standard]
+opencv-python-headless
+pillow
+python-multipart
