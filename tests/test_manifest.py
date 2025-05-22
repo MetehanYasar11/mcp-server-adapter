@@ -28,6 +28,6 @@ def test_tools_list_http():
         if resp.status_code == 200:
             data = resp.json()
             assert "tools" in data
+            assert any(t["name"] == "detect_objects" for t in data["tools"])
             return
     pytest.fail("Neither /tools/list nor /tools/list/ returned 200")
-    assert any(t["name"] == "detect_objects" for t in data["tools"])

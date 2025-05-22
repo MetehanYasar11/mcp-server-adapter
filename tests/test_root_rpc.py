@@ -8,7 +8,9 @@ def test_tools_list_root_http():
     data = {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
     r = client.post("/", json=data)
     assert r.status_code == 200
-    assert any(t["name"] == "detect_objects" for t in r.json()["result"])
+    body = r.json()
+    assert "tools" in body["result"]
+    assert any(t["name"] == "detect_objects" for t in body["result"]["tools"])
 
 def test_initialize_root_http():
     data = {"jsonrpc": "2.0", "id": 2, "method": "initialize", "params": {}}

@@ -5,6 +5,7 @@ A minimal MCP adapter for VS Code Copilot Agent Mode (REST + STDIO).
 ## Quick Start
 
 
+
 ### STDIO mode
 ```
 python -m mcp_vision_adapter.main
@@ -13,7 +14,6 @@ python -m mcp_vision_adapter.main
 - **JSON-RPC 2.0:** Tüm STDIO yanıtları artık `{ "jsonrpc": "2.0", "id": <istek_id>, ... }` formatında döner. Hatalar da aynı şekilde JSON-RPC error objesiyle döner.
 - On Windows, if prompted for manual input, type your answer and press Enter. If `/dev/tty` is unavailable, the adapter will use a Windows-compatible fallback (character input or stdin).
 - Input/output is newline-delimited JSON (one JSON object per line, per MCP spec).
-
 
 ### HTTP/SSE mode
 ```
@@ -26,6 +26,8 @@ uvicorn mcp_vision_adapter.main:app --port 3000
 - `/ui` is a minimal HTML page for quick manual testing.
 - If neither `manual_result` nor `MANUAL_RESULT` env is set and the adapter is not running in a TTY (e.g. Uvicorn), it returns a placeholder string instead of blocking for input.
 - See `.vscode/mcp.json` for VS Code integration.
+
+**Note:** The `tools/list` response is now wrapped in `{ "tools": [...] }` as required by VS Code’s MCP preview. (Older versions returned a bare list.)
 
 ## Testing
 

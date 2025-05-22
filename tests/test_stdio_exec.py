@@ -30,6 +30,8 @@ def test_stdio_detect_objects_env(monkeypatch):
     def assert_jsonrpc_ok(line):
         obj = json.loads(line)
         assert obj["jsonrpc"] == "2.0" and "result" in obj
+        if "result" in obj and isinstance(obj["result"], dict) and "tools" in obj["result"]:
+            assert any(t["name"] == "detect_objects" for t in obj["result"]["tools"])
     # Check initialize and execute responses
     assert_jsonrpc_ok(lines[0])
     assert_jsonrpc_ok(lines[2])

@@ -123,7 +123,7 @@ async def root_rpc(request: Request):
             result = get_initialize_response()["result"]
             return {"jsonrpc": "2.0", "id": jsonrpc_id, "result": result}
         elif method == "tools/list":
-            result = get_manifest()["tools"]
+            result = get_manifest()
             return {"jsonrpc": "2.0", "id": jsonrpc_id, "result": result}
         elif method == "tools/call":
             # params: {tool, input}
@@ -227,8 +227,11 @@ def stdio_main():
                     root = roots[0]
                 payload = get_initialize_response()["result"]
                 resp = {"jsonrpc": "2.0", "id": req_id, "result": payload}
-            elif method in ("manifest", "tools/list"):
-                payload = get_manifest()["tools"] if method == "tools/list" else get_manifest()
+            elif method == "tools/list":
+                payload = get_manifest()
+                resp = {"jsonrpc": "2.0", "id": req_id, "result": payload}
+            elif method == "manifest":
+                payload = get_manifest()
                 resp = {"jsonrpc": "2.0", "id": req_id, "result": payload}
             elif method in ("execute", "tools/call"):
                 tool = req["params"]["tool"]
