@@ -27,7 +27,7 @@ def test_tools_call_root_http():
     }
     r = client.post("/", json=data)
     assert r.status_code == 200
-    # Artık override yok, gerçek nesne tespiti sonucu beklenir
+    # No more override, expect real object detection result
     assert isinstance(r.json()["result"], str)
 
 def test_unknown_method_root_http():

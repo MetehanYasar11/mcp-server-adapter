@@ -6,9 +6,9 @@ import time
 import pytest
 
 def test_stdio_detect_objects_env(monkeypatch):
-    # Set env var for subprocess
+    # Set environment variable for subprocess
     env = os.environ.copy()
-    # MANUAL_RESULT yok, gerçek sonuç veya hata beklenir
+    # No MANUAL_RESULT, expect real result or error
     proc = subprocess.Popen(
         [sys.executable, "-m", "mcp_vision_adapter.main"],
         stdin=subprocess.PIPE,
@@ -38,5 +38,5 @@ def test_stdio_detect_objects_env(monkeypatch):
     assert_jsonrpc_ok(lines[2])  # execute
     if len(lines) > 3:
         assert_jsonrpc_ok(lines[3])  # tools/call
-    # Artık override yok, gerçek sonuç veya hata beklenir
+    # No override, expect real result or error
     assert any("error" in l or "No objects detected" in l or "person" in l or "car" in l for l in lines), f"No valid output: {lines}"

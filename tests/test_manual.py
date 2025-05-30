@@ -17,7 +17,7 @@ def test_exec_manual_param():
             "input": {"image_path": "test.jpg", "manual_result": "from_param"}
         }
     })
-    # Manual param devre dışı, hata beklenir veya gerçek sonuç döner
+    # Manual param is disabled, expect error or real result
     assert resp.status_code == 200
     assert isinstance(resp.json()["result"], str)
 
@@ -50,5 +50,5 @@ def test_stdio_stdin_branch():
     # Check initialize and tools/call responses
     assert_jsonrpc_ok(lines[0])
     assert_jsonrpc_ok(lines[1])
-    # Artık placeholder yok, hata veya gerçek sonuç beklenir
+    # No more placeholder, expect error or real result
     assert any("error" in l or "No objects detected" in l or "person" in l or "car" in l for l in lines), f"No valid output: {lines}"

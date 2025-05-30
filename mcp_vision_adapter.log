@@ -85,3 +85,38 @@
 2025-05-30 11:10:20,144 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
 2025-05-30 11:10:20,144 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
 2025-05-30 11:10:20,144 INFO [handle_call] result=bus, person
+2025-05-30 13:07:11,215 INFO [stdio_main] MCP Vision Adapter stdio_main started.
+2025-05-30 13:07:11,215 INFO [stdio_main] Received line: {"id": 1, "jsonrpc": "2.0", "method": "initialize"}
+2025-05-30 13:07:11,215 INFO [stdio_main] Received line: {"id": 2, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 13:07:11,215 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 13:07:11,216 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 13:07:11,216 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 13:07:11,216 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 13:07:11,420 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 13:07:11,422 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 13:07:11,614 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 13:07:11,615 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 13:07:11,615 INFO [stdio_main] Tool result: bus, person
+2025-05-30 13:07:15,339 INFO [stdio_main] MCP Vision Adapter stdio_main started.
+2025-05-30 13:07:15,339 INFO [stdio_main] Received line: {"id": 1, "jsonrpc": "2.0", "method": "initialize"}
+2025-05-30 13:07:15,340 INFO [stdio_main] Received line: {"id": 2, "jsonrpc": "2.0", "method": "manifest"}
+2025-05-30 13:07:15,340 INFO [stdio_main] Received line: {"id": 3, "jsonrpc": "2.0", "method": "execute", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 13:07:15,340 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 13:07:15,340 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 13:07:15,340 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 13:07:15,340 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 13:07:15,538 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 13:07:15,540 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 13:07:15,728 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 13:07:15,729 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 13:07:15,729 INFO [stdio_main] Tool result: bus, person
+2025-05-30 13:07:15,729 INFO [stdio_main] Received line: {"id": 4, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 13:07:15,730 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 13:07:15,730 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 13:07:15,730 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 13:07:15,730 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 13:07:15,730 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 13:07:15,731 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 13:07:15,964 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 13:07:15,964 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 13:07:15,964 INFO [stdio_main] Tool result: bus, person

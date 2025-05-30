@@ -134,7 +134,7 @@ def detect_objects_impl(image_path: str, root: str = None, manual_result: str = 
         # Fallback: manual/placeholder
         pass
 
-    # Artık manuel input veya placeholder yok, gerçek hata döndür
+    # No more manual input or placeholder, return real error
     return "[error: object detection failed]"
 
 
