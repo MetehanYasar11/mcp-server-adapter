@@ -40,15 +40,56 @@ This repo demonstrates a reference implementation using Ultralytics YOLOv8 (with
 
 ---
 
+
 ## 🚦 Quick Start
 
-### Docker Compose (YOLOv8 + Adapter)
+You can run the MCP Adapter and YOLOv8 service in three ways:
+
+### 1. Virtual Environment (Recommended for Dev)
+
+**Step 1:** Create and activate a virtual environment (venv or conda)
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+# or with conda
+conda create -n mcp python=3.10
+conda activate mcp
+```
+**Step 2:** Install dependencies
+```powershell
+pip install -r yolov8_service/requirements.txt
+pip install -e .
+```
+**Step 3:** Start YOLOv8 service
+```powershell
+cd yolov8_service
+uvicorn app.main:app --host 0.0.0.0 --port 8080
+# (Optional) Streamlit UI: streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+```
+**Step 4:** Start MCP Adapter
+```powershell
+cd ..
+uvicorn mcp_vision_adapter.main:app --port 3000
+```
+
+### 2. Docker Based (YOLOv8 + Adapter)
+
+**Step 1:** Build and run both services with Docker Compose
+```powershell
+docker-compose up --build
+```
+- YOLOv8 service: [http://localhost:8080](http://localhost:8080)
+- Adapter: [http://localhost:3000](http://localhost:3000)
+- Streamlit UI: [http://localhost:8501](http://localhost:8501)
+
+### 3. All-in-One: Just Docker Compose!
+
+The provided `docker-compose.yml` launches both YOLOv8 and MCP Adapter, with all ports mapped and model management UI enabled. Just run:
 ```powershell
 docker-compose up --build
 ```
 
-- YOLOv8 service: [http://localhost:8080](http://localhost:8080)
-- Adapter: [http://localhost:3000](http://localhost:3000)
+---
 
 #### Test YOLOv8 Service
 ```powershell
@@ -60,6 +101,7 @@ curl -F file=@test.jpg http://localhost:8080/detect
 Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
 ```
 
+---
 
 ### STDIO Mode (Currently not supported for VS Code Copilot tool execution)
 ```

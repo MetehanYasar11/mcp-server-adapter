@@ -1,6 +1,27 @@
+
 # YOLOv8 Microservice
 
 A FastAPI-based microservice for running Ultralytics YOLOv8 detection, segmentation, and pose estimation.
+
+---
+
+## 🖥️ Streamlit Model Manager UI
+
+This service includes a built-in Streamlit web interface for managing YOLOv8 model weights. You can:
+- View available YOLOv8 `.pt` models in the `/models` directory
+- Upload new YOLOv8 weights via the browser
+- See and set the current default model
+
+**How to use:**
+1. Start the YOLOv8 microservice (see Docker instructions below)
+2. Open your browser and go to: [http://localhost:8501](http://localhost:8501)
+3. You will see a model manager interface:
+
+![YOLOv8 Model Manager UI](../yolov8_service_ui.png)
+
+See [USAGE.md](USAGE.md) for more details.
+
+---
 
 ## Endpoints
 - `POST /detect` — Object detection
