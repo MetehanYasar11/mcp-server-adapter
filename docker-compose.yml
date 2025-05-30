@@ -11,3 +11,5 @@ services:
       YOLO_SERVICE_URL: http://yolo:8080
     ports: [ "3000:3000" ]
     depends_on: [ yolo ]
+    volumes:
+      - ./test.jpg:/app/test.jpg
