@@ -1,15 +1,27 @@
 
 
+
 # MCP Vision Adapter
 
 <p align="center">
-  <img src="https://img.shields.io/badge/YOLOv8-Powered-blue" alt="YOLOv8 Powered"/>
-  <img src="https://img.shields.io/badge/REST%20API-Ready-green" alt="REST API Ready"/>
-  <img src="https://img.shields.io/badge/VS%20Code%20Copilot-Agent%20Mode-orange" alt="VS Code Copilot Agent Mode"/>
+  <img src="https://img.shields.io/badge/MCP%20Protocol-2024--03--26-blue" alt="MCP Protocol Version"/>
+  <img src="https://img.shields.io/badge/Universal%20CLI%20Adapter-hub%20for%20LLMs-orange" alt="Universal CLI Adapter"/>
+  <img src="https://img.shields.io/badge/REST%20%2B%20STDIO-API-green" alt="REST + STDIO API"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License"/>
 </p>
 
-**MCP Vision Adapter** is a modern, open-source visual perception platform powered by Ultralytics YOLOv8, supporting REST/STDIO APIs, full VS Code Copilot Agent Mode integration, and a built-in web UI for model management and live results.
+<h3 align="center">MCP Service for Oldies but Goldies</h3>
+
+**MCP Vision Adapter** is a universal, open-source MCP (Model Context Protocol) adapter for all CLI projects. It is designed to modernize and connect your classic automations, scripts, and detection tools to LLM/agent ecosystems—no matter how old or gold they are!
+
+> "Turn your legacy CLI automations into LLM/agent tools. If your software has a CLI, you can make it an agent tool—no rewrite required."
+
+This repo demonstrates a reference implementation using Ultralytics YOLOv8 (with CLI support) as an example service. You can register your own custom YOLOv8 models or any CLI-based tool as an agent tool and get detection results, comments, or outputs directly in your LLM workflows.
+
+**MCP Protocol Version:** `2024-03-26`  
+**Standard:** [Model Context Protocol (MCP)](https://github.com/microsoft/model-context-protocol)
+
+---
 
 ---
 
