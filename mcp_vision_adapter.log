@@ -1,0 +1,87 @@
+2025-05-30 02:35:08,718 INFO [stdio_main] MCP Vision Adapter stdio_main started.
+2025-05-30 02:35:08,719 INFO [stdio_main] Received line: {"id": 1, "jsonrpc": "2.0", "method": "initialize"}
+2025-05-30 02:35:08,719 INFO [stdio_main] Received line: {"id": 2, "jsonrpc": "2.0", "method": "manifest"}
+2025-05-30 02:35:08,719 INFO [stdio_main] Received line: {"id": 3, "jsonrpc": "2.0", "method": "execute", "params": {"tool": "detect_objects", "input": {"image_path": "dummy"}}}
+2025-05-30 02:35:08,719 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'dummy'} and root: None
+2025-05-30 02:35:08,720 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'dummy'}, root=None
+2025-05-30 02:35:08,720 INFO [detect_objects_impl] Called with image_path=dummy, root=None, manual_result=None
+2025-05-30 02:35:08,720 INFO [detect_objects_impl] Resolved image_path: dummy
+2025-05-30 02:35:08,720 ERROR [detect_objects_impl] File not found: dummy
+2025-05-30 02:35:08,720 INFO [stdio_main] Tool result: [error: file not found: dummy]
+2025-05-30 02:39:01,879 INFO [stdio_main] MCP Vision Adapter stdio_main started.
+2025-05-30 02:39:01,879 INFO [stdio_main] Received line: {"id": 1, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 02:39:01,879 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 02:39:01,879 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 02:39:01,879 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 02:39:01,879 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 02:39:02,087 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 02:39:02,090 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 02:39:02,358 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 02:39:02,358 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 02:39:02,359 INFO [stdio_main] Tool result: bus, person
+2025-05-30 10:46:35,204 INFO [stdio_main] MCP Vision Adapter stdio_main started.
+2025-05-30 10:46:35,205 INFO [stdio_main] Received line: {"id": 1, "jsonrpc": "2.0", "method": "initialize"}
+2025-05-30 10:46:35,206 INFO [stdio_main] Received line: {"id": 2, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 10:46:35,206 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 10:46:35,206 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 10:46:35,206 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 10:46:35,206 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 10:46:35,407 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 10:46:35,409 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 10:46:35,636 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 10:46:35,636 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 10:46:35,636 INFO [stdio_main] Tool result: bus, person
+2025-05-30 10:46:44,336 INFO [stdio_main] MCP Vision Adapter stdio_main started.
+2025-05-30 10:46:44,336 INFO [stdio_main] Received line: {"id": 1, "jsonrpc": "2.0", "method": "initialize"}
+2025-05-30 10:46:44,336 INFO [stdio_main] Received line: {"id": 2, "jsonrpc": "2.0", "method": "manifest"}
+2025-05-30 10:46:44,336 INFO [stdio_main] Received line: {"id": 3, "jsonrpc": "2.0", "method": "execute", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 10:46:44,336 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 10:46:44,336 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 10:46:44,336 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 10:46:44,336 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 10:46:44,548 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 10:46:44,550 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 10:46:44,752 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 10:46:44,752 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 10:46:44,752 INFO [stdio_main] Tool result: bus, person
+2025-05-30 10:57:52,232 INFO [stdio_main] MCP Vision Adapter stdio_main started.
+2025-05-30 10:57:52,233 INFO [stdio_main] Received line: {"id": 1, "jsonrpc": "2.0", "method": "initialize"}
+2025-05-30 10:57:52,233 INFO [stdio_main] Received line: {"id": 2, "jsonrpc": "2.0", "method": "manifest"}
+2025-05-30 10:57:52,233 INFO [stdio_main] Received line: {"id": 3, "jsonrpc": "2.0", "method": "execute", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 10:57:52,233 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 10:57:52,233 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 10:57:52,233 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 10:57:52,233 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 10:57:52,442 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 10:57:52,443 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 10:57:52,633 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 10:57:52,634 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 10:57:52,634 INFO [stdio_main] Tool result: bus, person
+2025-05-30 10:57:52,634 INFO [stdio_main] Received line: {"id": 4, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
+2025-05-30 10:57:52,634 INFO [stdio_main] Calling tool: detect_objects with params: {'image_path': 'test.jpg'} and root: None
+2025-05-30 10:57:52,634 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 10:57:52,634 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 10:57:52,634 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 10:57:52,634 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 10:57:52,635 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 10:57:52,851 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 10:57:52,852 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 10:57:52,852 INFO [stdio_main] Tool result: bus, person
+2025-05-30 11:08:59,130 INFO [handle_call] payload={'tool': 'detect_objects', 'input': {'image_path': 'test.jpg'}}, root=None
+2025-05-30 11:08:59,130 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 11:08:59,130 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 11:08:59,130 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 11:08:59,332 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 11:08:59,334 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 11:08:59,569 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 11:08:59,569 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 11:08:59,569 INFO [handle_call] result=bus, person
+2025-05-30 11:10:19,942 INFO [handle_call] payload={'tool': 'detect_objects', 'input': {'image_path': 'test.jpg'}}, root=None
+2025-05-30 11:10:19,942 INFO [execute_tool] tool_name=detect_objects, params={'image_path': 'test.jpg'}, root=None
+2025-05-30 11:10:19,942 INFO [detect_objects_impl] Called with image_path=test.jpg, root=None, manual_result=None
+2025-05-30 11:10:19,942 INFO [detect_objects_impl] Resolved image_path: test.jpg
+2025-05-30 11:10:19,942 INFO [detect_objects_impl] Sending to YOLO_SERVICE: http://localhost:8080/detect
+2025-05-30 11:10:19,944 DEBUG Starting new HTTP connection (1): localhost:8080
+2025-05-30 11:10:20,144 DEBUG http://localhost:8080 "POST /detect HTTP/1.1" 200 633
+2025-05-30 11:10:20,144 INFO [detect_objects_impl] YOLO response: {'results': [{'class_': 'bus', 'conf': 0.8717429637908936, 'bbox': [18.159942626953125, 171.29885864257812, 598.5208129882812, 557.5692749023438], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8620010614395142, 'bbox': [35.52125549316406, 294.9700927734375, 180.74041748046875, 668.34619140625], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8443607091903687, 'bbox': [496.1734619140625, 282.34381103515625, 599.8883056640625, 648.793701171875], 'mask': None, 'keypoints': None}, {'class_': 'person', 'conf': 0.8300056457519531, 'bbox': [164.6024932861328, 300.35870361328125, 254.9892578125, 635.2694702148438], 'mask': None, 'keypoints': None}]}
+2025-05-30 11:10:20,144 INFO [handle_call] result=bus, person

@@ -14,9 +14,11 @@
 
 
 
+
 import os
 import sys
 import json
+import logging
 from typing import Any, Dict
 
 
@@ -24,6 +26,18 @@ from typing import Any, Dict
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
+
+
+# --- Logging setup ---
+LOG_FILE = os.environ.get("MCP_VISION_LOG", "mcp_vision_adapter.log")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE, encoding="utf-8"),
+        logging.StreamHandler(sys.stderr)
+    ]
+)
 
 app = FastAPI()
 
@@ -82,6 +96,7 @@ def read_manual_line(prompt: str) -> str:
         return input()
 
 def detect_objects_impl(image_path: str, root: str = None, manual_result: str = None) -> str:
+    logging.info(f"[detect_objects_impl] Called with image_path={image_path}, root={root}, manual_result={manual_result}")
     # MANUAL_RESULT ve manual_result sadece DEBUG/TEST için, prod'da devre dışı
     # if manual_result:
     #     return manual_result
@@ -89,25 +104,33 @@ def detect_objects_impl(image_path: str, root: str = None, manual_result: str = 
     # if env_result:
     #     return env_result
     # If root is set and image_path is relative, resolve it
+
     if root and not os.path.isabs(image_path):
         image_path = os.path.abspath(os.path.join(root, image_path))
+    logging.info(f"[detect_objects_impl] Resolved image_path: {image_path}")
+    if not os.path.exists(image_path):
+        logging.error(f"[detect_objects_impl] File not found: {image_path}")
+        return f"[error: file not found: {image_path}]"
 
     # --- YOLOv8 service integration ---
     import requests
     YOLO_SERVICE = os.getenv("YOLO_SERVICE_URL", "http://localhost:8080")
-    # Try to send to YOLO service
+    logging.info(f"[detect_objects_impl] Sending to YOLO_SERVICE: {YOLO_SERVICE}/detect")
     try:
         with open(image_path, "rb") as f:
             files = {"file": (os.path.basename(image_path), f, "application/octet-stream")}
             resp = requests.post(f"{YOLO_SERVICE}/detect", files=files, timeout=60)
         resp.raise_for_status()
         data = resp.json()
+        logging.info(f"[detect_objects_impl] YOLO response: {data}")
         # Return summary text: class list
         classes = [r.get("class_", r.get("class", "?")) for r in data.get("results", [])]
         if not classes:
+            logging.info("[detect_objects_impl] No objects detected.")
             return "No objects detected."
         return ", ".join(sorted(set(classes)))
     except Exception as e:
+        logging.error(f"[detect_objects_impl] Exception: {e}", exc_info=True)
         # Fallback: manual/placeholder
         pass
 
@@ -116,16 +139,20 @@ def detect_objects_impl(image_path: str, root: str = None, manual_result: str = 
 
 
 def execute_tool(tool_name: str, params: Dict[str, Any], root: str = None) -> Any:
+    logging.info(f"[execute_tool] tool_name={tool_name}, params={params}, root={root}")
     if tool_name == "detect_objects":
         manual_result = params.get("manual_result")
         return detect_objects_impl(params["image_path"], root, manual_result)
+    logging.error(f"[execute_tool] Unknown tool: {tool_name}")
     raise Exception(f"Unknown tool: {tool_name}")
 
 # --- JSON-RPC universal dispatcher for POST / ---
 def handle_call(payload, root=None):
+    logging.info(f"[handle_call] payload={payload}, root={root}")
     tool = payload["tool"]
     params = payload["input"]
     result = execute_tool(tool, params, root)
+    logging.info(f"[handle_call] result={result}")
     return {"result": result}
 
 
@@ -230,11 +257,13 @@ async def http_ui():
 def stdio_main():
     session_id = None
     root = None
+    logging.info("[stdio_main] MCP Vision Adapter stdio_main started.")
     while True:
         line = sys.stdin.readline()
         if not line:
             break
         try:
+            logging.info(f"[stdio_main] Received line: {line.strip()}")
             req = json.loads(line)
             method = req.get("method")
             req_id = req.get("id")
@@ -255,13 +284,18 @@ def stdio_main():
                 tool = req["params"]["tool"]
                 params = req["params"]["input"]
                 try:
+                    logging.info(f"[stdio_main] Calling tool: {tool} with params: {params} and root: {root}")
                     result = execute_tool(tool, params, root)
                     resp = {"jsonrpc": "2.0", "id": req_id, "result": result}
+                    logging.info(f"[stdio_main] Tool result: {result}")
                 except Exception as e:
+                    logging.error(f"[stdio_main] Tool execution error: {e}", exc_info=True)
                     resp = {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32000, "message": str(e)}}
             else:
+                logging.error(f"[stdio_main] Unknown method: {method}")
                 resp = {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": "Unknown method"}}
         except Exception as e:
+            logging.error(f"[stdio_main] Exception: {e}", exc_info=True)
             resp = {"jsonrpc": "2.0", "id": None, "error": {"code": -32603, "message": str(e)}}
         print(json.dumps(resp), flush=True)
 

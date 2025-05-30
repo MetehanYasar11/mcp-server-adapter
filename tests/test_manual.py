@@ -37,7 +37,7 @@ def test_stdio_stdin_branch():
     )
     reqs = [
         {"id": 1, "jsonrpc": "2.0", "method": "initialize"},
-        {"id": 2, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "dummy"}}}
+        {"id": 2, "jsonrpc": "2.0", "method": "tools/call", "params": {"tool": "detect_objects", "input": {"image_path": "test.jpg"}}}
     ]
     input_data = "\n".join(json.dumps(r) for r in reqs) + "\n"
     out, err = proc.communicate(input=input_data, timeout=5)
