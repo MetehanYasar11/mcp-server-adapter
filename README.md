@@ -48,10 +48,41 @@ curl -F file=@test.jpg http://localhost:8080/detect
 Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
 ```
 
-### STDIO Mode
+
+### STDIO Mode (Currently not supported for VS Code Copilot tool execution)
 ```
 python -m mcp_vision_adapter.main
 ```
+> ⚠️ **Note:** VS Code Copilot tool execution via STDIO is currently not supported. Please use the HTTP API for full integration. This will be fixed in an upcoming update.
+## 🤝 Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. The goal is to make this repo a hub for connecting classic automations and tools to modern LLM/agent environments. Contact [Metehan Yaşar on LinkedIn](https://www.linkedin.com/in/metehan-y-16475a164/) for questions or collaboration.
+
+---
+
+## 🛣️ Roadmap & Future Updates
+
+- **Hotfix:** VS Code Copilot tool execution via STDIO is currently not supported. Use HTTP API for now. This will be fixed soon.
+- **Upcoming:**
+  - **n8n Example Automation:** A ready-to-use n8n template and a short usage video will be added.
+  - **Complete Ultralytics Service:** Full support for pose and segmentation tasks, including time-sliced video analysis, coming within 2 weeks. This repo is a reference CLI-to-MCP service.
+  - **v2: Automation Agent:** An OpenAI model will be integrated, enabling agent-based automation as a service. This will allow connecting automations as services—stay tuned!
+
+---
+
+## 🛠️ Custom Service Integration Tutorial
+
+To connect your own service or tool as an adapter:
+
+1. Implement a REST or STDIO interface that matches the MCP protocol (see `mcp_vision_adapter/main.py`).
+2. Register your service in `.vscode/mcp.json` or your orchestrator.
+3. Use the HTTP API for best compatibility:
+   ```powershell
+   Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"your_tool","input":{...}}'
+   ```
+4. For advanced use, see the test suite and example adapters.
+
+---
 
 ### HTTP/SSE Mode
 ```
