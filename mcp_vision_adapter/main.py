@@ -97,7 +97,8 @@ def read_manual_line(prompt: str) -> str:
 
 def detect_objects_impl(image_path: str, root: str = None, manual_result: str = None) -> str:
     logging.info(f"[detect_objects_impl] Called with image_path={image_path}, root={root}, manual_result={manual_result}")
-    # MANUAL_RESULT ve manual_result sadece DEBUG/TEST için, prod'da devre dışı
+    # Manual overrides are currently disabled. The commented code below is
+    # legacy behavior kept for reference only.
     # if manual_result:
     #     return manual_result
     # env_result = os.environ.get("MANUAL_RESULT")
