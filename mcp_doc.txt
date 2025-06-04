@@ -2,6 +2,6 @@ adapter doc
 
 https://chatgpt.com/s/dr_682f0708e850819185b632ba2fb4f569
 
-ultrlytics doc
+ultralytics doc
 
 https://chatgpt.com/s/dr_682f948cd2488191a7d29ee7662a19a2
