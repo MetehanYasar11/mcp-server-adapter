@@ -71,6 +71,7 @@ def run_yolo(task: str, file=None, image_url=None, video_url=None, weights="/wei
     # Parse results
     parsed = []
     for r in results:
+        start_index = len(parsed)
         for box in r.boxes:
             parsed.append({
                 "class_": r.names[int(box.cls[0])],
@@ -79,10 +80,12 @@ def run_yolo(task: str, file=None, image_url=None, video_url=None, weights="/wei
             })
         if hasattr(r, "masks") and r.masks is not None:
             for i, mask in enumerate(r.masks.data):
-                parsed[i]["mask"] = mask.cpu().numpy().tolist()
+                if start_index + i < len(parsed):
+                    parsed[start_index + i]["mask"] = mask.cpu().numpy().tolist()
         if hasattr(r, "keypoints") and r.keypoints is not None:
             for i, kps in enumerate(r.keypoints.data):
-                parsed[i]["keypoints"] = kps.cpu().numpy().tolist()
+                if start_index + i < len(parsed):
+                    parsed[start_index + i]["keypoints"] = kps.cpu().numpy().tolist()
 
     # Cleanup
     for f in cleanup:
