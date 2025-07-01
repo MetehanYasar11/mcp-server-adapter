@@ -1,26 +1,10 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import os
 import sys
 import json
 import logging
+import subprocess
+import shlex
 from typing import Any, Dict
-
 
 
 from fastapi import FastAPI, Request
@@ -35,8 +19,8 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s",
     handlers=[
         logging.FileHandler(LOG_FILE, encoding="utf-8"),
-        logging.StreamHandler(sys.stderr)
-    ]
+        logging.StreamHandler(sys.stderr),
+    ],
 )
 
 app = FastAPI()
@@ -50,53 +34,76 @@ MANIFEST = {
                 "type": "object",
                 "properties": {
                     "image_path": {"type": "string"},
-                    "manual_result": {"type": "string", "description": "Optional manual result override."}
+                    "manual_result": {
+                        "type": "string",
+                        "description": "Optional manual result override.",
+                    },
                 },
-                "required": ["image_path"]
-            }
-        }
+                "required": ["image_path"],
+            },
+        },
+        {
+            "name": "yolo_cli",
+            "description": "Run any Ultralytics CLI command (e.g. train, predict).",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "args": {
+                        "type": "string",
+                        "description": "Arguments passed to `python -m ultralytics`, such as 'train model=yolov8n.pt data=coco128.yaml'",
+                    }
+                },
+                "required": ["args"],
+            },
+        },
     ]
 }
 
 PROTOCOL_VERSION = "2024-03-26"
 
+
 # --- STDIO/REST shared logic ---
 def get_manifest() -> Dict[str, Any]:
     return {"tools": MANIFEST["tools"]}
+
 
 def get_initialize_response() -> Dict[str, Any]:
     return {
         "result": {
             "protocolVersion": PROTOCOL_VERSION,
-            "capabilities": {
-                "tools": {
-                    "listChanged": True
-                }
-            }
+            "capabilities": {"tools": {"listChanged": True}},
         }
     }
 
+
 def read_manual_line(prompt: str) -> str:
     import sys, os
+
     sys.stderr.write(prompt)
     sys.stderr.flush()
     try:
         if os.name == "nt":
             import msvcrt
+
             chars = []
             while True:
                 ch = msvcrt.getwch()
-                if ch in ('\r', '\n'):
+                if ch in ("\r", "\n"):
                     break
                 chars.append(ch)
-            return ''.join(chars)
+            return "".join(chars)
         else:
             return sys.__stdin__.readline().rstrip("\n")
     except Exception:
         return input()
 
-def detect_objects_impl(image_path: str, root: str = None, manual_result: str = None) -> str:
-    logging.info(f"[detect_objects_impl] Called with image_path={image_path}, root={root}, manual_result={manual_result}")
+
+def detect_objects_impl(
+    image_path: str, root: str = None, manual_result: str = None
+) -> str:
+    logging.info(
+        f"[detect_objects_impl] Called with image_path={image_path}, root={root}, manual_result={manual_result}"
+    )
     # Manual overrides are currently disabled. The commented code below is
     # legacy behavior kept for reference only.
     # if manual_result:
@@ -115,17 +122,24 @@ def detect_objects_impl(image_path: str, root: str = None, manual_result: str = 
 
     # --- YOLOv8 service integration ---
     import requests
+
     YOLO_SERVICE = os.getenv("YOLO_SERVICE_URL", "http://localhost:8080")
-    logging.info(f"[detect_objects_impl] Sending to YOLO_SERVICE: {YOLO_SERVICE}/detect")
+    logging.info(
+        f"[detect_objects_impl] Sending to YOLO_SERVICE: {YOLO_SERVICE}/detect"
+    )
     try:
         with open(image_path, "rb") as f:
-            files = {"file": (os.path.basename(image_path), f, "application/octet-stream")}
+            files = {
+                "file": (os.path.basename(image_path), f, "application/octet-stream")
+            }
             resp = requests.post(f"{YOLO_SERVICE}/detect", files=files, timeout=60)
         resp.raise_for_status()
         data = resp.json()
         logging.info(f"[detect_objects_impl] YOLO response: {data}")
         # Return summary text: class list
-        classes = [r.get("class_", r.get("class", "?")) for r in data.get("results", [])]
+        classes = [
+            r.get("class_", r.get("class", "?")) for r in data.get("results", [])
+        ]
         if not classes:
             logging.info("[detect_objects_impl] No objects detected.")
             return "No objects detected."
@@ -139,13 +153,32 @@ def detect_objects_impl(image_path: str, root: str = None, manual_result: str = 
     return "[error: object detection failed]"
 
 
+def run_yolo_cli(args: str, root: str = None) -> str:
+    """Run an arbitrary Ultralytics CLI command."""
+    logging.info(f"[run_yolo_cli] args={args}, root={root}")
+    cmd = [sys.executable, "-m", "ultralytics"] + shlex.split(args)
+    logging.info(f"[run_yolo_cli] Running command: {' '.join(cmd)}")
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=root)
+        if proc.returncode != 0:
+            logging.error(f"[run_yolo_cli] Error: {proc.stderr}")
+            return proc.stderr.strip()
+        return proc.stdout.strip() or "done"
+    except Exception as e:
+        logging.error(f"[run_yolo_cli] Exception: {e}", exc_info=True)
+        return f"[error: {e}]"
+
+
 def execute_tool(tool_name: str, params: Dict[str, Any], root: str = None) -> Any:
     logging.info(f"[execute_tool] tool_name={tool_name}, params={params}, root={root}")
     if tool_name == "detect_objects":
         manual_result = params.get("manual_result")
         return detect_objects_impl(params["image_path"], root, manual_result)
+    if tool_name == "yolo_cli":
+        return run_yolo_cli(params.get("args", ""), root)
     logging.error(f"[execute_tool] Unknown tool: {tool_name}")
     raise Exception(f"Unknown tool: {tool_name}")
+
 
 # --- JSON-RPC universal dispatcher for POST / ---
 def handle_call(payload, root=None):
@@ -155,7 +188,6 @@ def handle_call(payload, root=None):
     result = execute_tool(tool, params, root)
     logging.info(f"[handle_call] result={result}")
     return {"result": result}
-
 
 
 @app.post("/")
@@ -177,19 +209,30 @@ async def root_rpc(request: Request):
                 call_result = handle_call(params)
                 return {"jsonrpc": "2.0", "id": jsonrpc_id, **call_result}
             except Exception as e:
-                return {"jsonrpc": "2.0", "id": jsonrpc_id, "error": {"code": -32000, "message": str(e)}}
+                return {
+                    "jsonrpc": "2.0",
+                    "id": jsonrpc_id,
+                    "error": {"code": -32000, "message": str(e)},
+                }
         else:
-            return {"jsonrpc": "2.0", "id": jsonrpc_id, "error": {"code": -32601, "message": f"Unknown method: {method}"}}
+            return {
+                "jsonrpc": "2.0",
+                "id": jsonrpc_id,
+                "error": {"code": -32601, "message": f"Unknown method: {method}"},
+            }
     except Exception as e:
         return {"jsonrpc": "2.0", "error": {"code": -32603, "message": str(e)}}
+
 
 @app.post("/initialize")
 async def http_initialize():
     return get_initialize_response()
 
+
 @app.get("/manifest")
 async def http_manifest():
     return get_manifest()
+
 
 @app.post("/execute")
 async def http_execute(request: Request):
@@ -202,10 +245,12 @@ async def http_execute(request: Request):
     except Exception as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
 
+
 @app.api_route("/tools/list", methods=["POST"])
 @app.api_route("/tools/list/", methods=["POST"])
 async def http_tools_list():
     return get_manifest()
+
 
 @app.post("/tools/call")
 async def http_tools_call(request: Request):
@@ -218,15 +263,18 @@ async def http_tools_call(request: Request):
     except Exception as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
 
+
 @app.get("/sse")
 async def http_sse():
     async def event_stream():
         yield "event: listChanged\ndata: {}\n\n"
+
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
 
 @app.get("/ui")
 async def http_ui():
-    html = '''
+    html = """
     <!DOCTYPE html>
     <html lang="en">
     <head><meta charset="utf-8"><title>MCP Vision Adapter UI</title></head>
@@ -251,7 +299,7 @@ async def http_ui():
     }
     </script>
     </body></html>
-    '''
+    """
     return JSONResponse(content=html, media_type="text/html")
 
 
@@ -285,21 +333,36 @@ def stdio_main():
                 tool = req["params"]["tool"]
                 params = req["params"]["input"]
                 try:
-                    logging.info(f"[stdio_main] Calling tool: {tool} with params: {params} and root: {root}")
+                    logging.info(
+                        f"[stdio_main] Calling tool: {tool} with params: {params} and root: {root}"
+                    )
                     result = execute_tool(tool, params, root)
                     resp = {"jsonrpc": "2.0", "id": req_id, "result": result}
                     logging.info(f"[stdio_main] Tool result: {result}")
                 except Exception as e:
-                    logging.error(f"[stdio_main] Tool execution error: {e}", exc_info=True)
-                    resp = {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32000, "message": str(e)}}
+                    logging.error(
+                        f"[stdio_main] Tool execution error: {e}", exc_info=True
+                    )
+                    resp = {
+                        "jsonrpc": "2.0",
+                        "id": req_id,
+                        "error": {"code": -32000, "message": str(e)},
+                    }
             else:
                 logging.error(f"[stdio_main] Unknown method: {method}")
-                resp = {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": "Unknown method"}}
+                resp = {
+                    "jsonrpc": "2.0",
+                    "id": req_id,
+                    "error": {"code": -32601, "message": "Unknown method"},
+                }
         except Exception as e:
             logging.error(f"[stdio_main] Exception: {e}", exc_info=True)
-            resp = {"jsonrpc": "2.0", "id": None, "error": {"code": -32603, "message": str(e)}}
+            resp = {
+                "jsonrpc": "2.0",
+                "id": None,
+                "error": {"code": -32603, "message": str(e)},
+            }
         print(json.dumps(resp), flush=True)
-
 
 
 # Only run stdio_main if this file is executed as a script, not on import (e.g. by pytest)
