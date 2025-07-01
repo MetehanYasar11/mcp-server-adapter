@@ -14,6 +14,7 @@ def test_manifest_lists_detect_objects():
     tools = manifest["tools"]
     tool_names = [t["name"] for t in tools]
     assert "detect_objects" in tool_names
+    assert "yolo_cli" in tool_names
     # Check inputSchema key exists for detect_objects
     detect_tool = next(t for t in tools if t["name"] == "detect_objects")
     assert "inputSchema" in detect_tool
@@ -29,5 +30,6 @@ def test_tools_list_http():
             data = resp.json()
             assert "tools" in data
             assert any(t["name"] == "detect_objects" for t in data["tools"])
+            assert any(t["name"] == "yolo_cli" for t in data["tools"])
             return
     pytest.fail("Neither /tools/list nor /tools/list/ returned 200")
