@@ -22,6 +22,7 @@
 - **Test Kapsamı:** Pytest ile uçtan uca testler, örnek test görselleri ve otomasyon.
 - **Video & Görüntü Desteği:** Video dosyalarında zaman dilimi veya kare bazlı analiz.
 - **Model Hot-Swap:** Çalışan serviste model dosyasını kolayca değiştir.
+- **Ultralytics CLI Erişimi:** Yeni `yolo_cli` aracı ile tüm komutları çalıştır.
 - **Kapsamlı API:** Kolayca genişletilebilir endpoint yapısı.
 
 ---
@@ -85,6 +86,11 @@ curl -F file=@test.jpg http://localhost:8080/detect
 #### Adapter'ı Test Et (YOLO'ya proxy)
 ```powershell
 Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
+```
+
+#### Ultralytics CLI Komutu Çalıştır
+```powershell
+Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"yolo_cli","input":{"args":"train model=yolov8n.pt data=coco128.yaml epochs=1"}}'
 ```
 
 ---

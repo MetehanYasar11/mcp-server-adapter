@@ -36,6 +36,7 @@ This repo demonstrates a reference implementation using Ultralytics YOLOv8 (with
 - **Comprehensive Testing:** End-to-end tests with pytest, sample images, and automation.
 - **Video & Image Support:** Analyze videos by time range or frame, as well as images.
 - **Model Hot-Swap:** Swap model files on a running service without downtime.
+- **Ultralytics CLI Access:** Train or run any command via the new `yolo_cli` tool.
 - **Extensible API:** Easily add new endpoints and capabilities.
 
 ---
@@ -99,6 +100,11 @@ curl -F file=@test.jpg http://localhost:8080/detect
 #### Test Adapter (proxies to YOLO)
 ```powershell
 Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
+```
+
+#### Run Any Ultralytics CLI Command
+```powershell
+Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"yolo_cli","input":{"args":"train model=yolov8n.pt data=coco128.yaml epochs=1"}}'
 ```
 
 ---
