@@ -101,6 +101,11 @@ curl -F file=@test.jpg http://localhost:8080/detect
 Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
 ```
 
+#### Run Any Ultralytics CLI Command
+```powershell
+Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"yolo_cli","input":{"args":"train model=yolov8n.pt data=coco128.yaml epochs=1"}}'
+```
+
 ---
 
 ### STDIO Mode (Currently not supported for VS Code Copilot tool execution)
