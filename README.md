@@ -37,6 +37,7 @@ This repo demonstrates a reference implementation using Ultralytics YOLOv8 (with
 - **Video & Image Support:** Analyze videos by time range or frame, as well as images.
 - **Model Hot-Swap:** Swap model files on a running service without downtime.
 - **Extensible API:** Easily add new endpoints and capabilities.
+- **Ultralytics CLI Support:** Execute any `ultralytics` command through the `yolo_cli` tool.
 
 ---
 

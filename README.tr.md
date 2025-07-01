@@ -23,6 +23,7 @@
 - **Video & Görüntü Desteği:** Video dosyalarında zaman dilimi veya kare bazlı analiz.
 - **Model Hot-Swap:** Çalışan serviste model dosyasını kolayca değiştir.
 - **Kapsamlı API:** Kolayca genişletilebilir endpoint yapısı.
+- **Ultralytics CLI Desteği:** `yolo_cli` aracı ile tüm `ultralytics` komutlarını çalıştır.
 
 ---
 
@@ -85,6 +86,11 @@ curl -F file=@test.jpg http://localhost:8080/detect
 #### Adapter'ı Test Et (YOLO'ya proxy)
 ```powershell
 Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
+```
+
+#### Herhangi Bir Ultralytics CLI Komutunu Çalıştır
+```powershell
+Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"yolo_cli","input":{"args":"train model=yolov8n.pt data=coco128.yaml epochs=1"}}'
 ```
 
 ---

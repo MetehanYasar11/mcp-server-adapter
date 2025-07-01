@@ -23,3 +23,4 @@ def test_manifest_includes_detect_objects():
     data = resp.json()
     assert "tools" in data
     assert any(t.get("name") == "detect_objects" for t in data["tools"])
+    assert any(t.get("name") == "yolo_cli" for t in data["tools"])
