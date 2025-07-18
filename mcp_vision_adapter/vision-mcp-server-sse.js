@@ -84,19 +84,36 @@ const createVisionServer = () => {
           throw new Error(`File not found: ${image_path}`);
         }
 
-        // Call YOLO service
+        // Call YOLO service with retry mechanism
         const YOLO_SERVICE = process.env.YOLO_SERVICE_URL || 'http://localhost:8080';
         
         if (!fetch || !FormData) {
           throw new Error('HTTP client dependencies not available');
         }
         
+        // Retry mechanism for YOLO service connection
+        const retryRequest = async (url, options, maxRetries = 3, delay = 2000) => {
+          for (let i = 0; i < maxRetries; i++) {
+            try {
+              const response = await fetch(url, options);
+              if (response.ok) {
+                return response;
+              }
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            } catch (error) {
+              console.log(`YOLO service attempt ${i + 1}/${maxRetries} failed:`, error.message);
+              if (i === maxRetries - 1) throw error;
+              await new Promise(resolve => setTimeout(resolve, delay));
+            }
+          }
+        };
+        
         // Create form data
         const formData = new FormData();
         formData.append('file', fs.createReadStream(image_path), path.basename(image_path));
 
-        // Send request to YOLO service
-        const response = await fetch(`${YOLO_SERVICE}/detect`, {
+        // Send request to YOLO service with retry
+        const response = await retryRequest(`${YOLO_SERVICE}/detect`, {
           method: 'POST',
           body: formData,
           headers: formData.getHeaders()
@@ -352,10 +369,37 @@ app.get('/manifest', (req, res) => {
   });
 });
 
-// Start server
+// YOLO Service Health Check
+async function waitForYoloService(maxRetries = 30, delay = 2000) {
+  const YOLO_SERVICE = process.env.YOLO_SERVICE_URL || 'http://localhost:8080';
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      console.log(`🔍 Checking YOLO service health... (${i + 1}/${maxRetries})`);
+      const response = await fetch(`${YOLO_SERVICE}/docs`);
+      if (response.ok) {
+        console.log('✅ YOLO service is ready!');
+        return true;
+      }
+    } catch (error) {
+      console.log(`⏳ YOLO service not ready yet, waiting ${delay}ms...`);
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  
+  console.warn('⚠️ YOLO service not available, but starting MCP server anyway...');
+  return false;
+}
+
+// Start server with YOLO health check
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`
+
+async function startServer() {
+  // Wait for YOLO service to be ready
+  await waitForYoloService();
+  
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`
 🎯 MCP Vision Adapter Server Running on Port ${PORT}
 ==================================================
 
@@ -367,8 +411,11 @@ app.listen(PORT, '0.0.0.0', () => {
 ✅ N8N MCP Client Compatible
 🔗 YOLO Service: ${process.env.YOLO_SERVICE_URL || 'http://localhost:8080'}
 ==================================================
-  `);
-});
+    `);
+  });
+}
+
+startServer();
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
