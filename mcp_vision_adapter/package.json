@@ -1,0 +1,35 @@
+{
+  "name": "mcp-vision-adapter",
+  "version": "1.0.0",
+  "description": "MCP Vision Adapter - N8N Compatible SSE Server for YOLO object detection",
+  "main": "vision-mcp-server-sse.js",
+  "scripts": {
+    "start": "node vision-mcp-server-sse.js",
+    "dev": "nodemon vision-mcp-server-sse.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "n8n",
+    "vision",
+    "yolo",
+    "object-detection",
+    "sse",
+    "server-sent-events"
+  ],
+  "author": "MCP Vision Adapter Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "express": "^4.18.2",
+    "form-data": "^4.0.0",
+    "node-fetch": "^2.7.0",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

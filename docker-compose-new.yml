@@ -10,26 +10,22 @@ services:
       - ./models:/weights
       - ./models:/app/models
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/docs"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
-      timeout: 10s
+      timeout: 3s
       retries: 3
-      start_period: 60s
-    networks:
-      - mcp_network
       
-  mcp-vision-adapter:
+  adapter:
     build:
       context: .
       dockerfile: Dockerfile.adapter
     container_name: mcp-vision-adapter
     restart: unless-stopped
     environment:
-      YOLO_SERVICE_URL: http://yolo:8080
+      YOLO_SERVICE_URL: http://yolov8:8080
       PORT: 3000
     depends_on: 
-      yolo:
-        condition: service_healthy
+      - yolo
     ports: 
       - "3000:3000"
     volumes:
@@ -38,13 +34,5 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 30s
-      timeout: 10s
+      timeout: 3s
       retries: 3
-      start_period: 30s
-    networks:
-      - mcp_network
-
-networks:
-  mcp_network:
-    driver: bridge
-    name: mcp_network

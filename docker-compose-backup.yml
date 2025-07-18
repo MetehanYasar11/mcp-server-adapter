@@ -1,0 +1,47 @@
+services:
+  yolo:  adapter:
+    build:
+      context: .
+      dockerfile: Dockerfile.adapter
+    container_name: mcp-vision-adapter
+    restart: unless-stopped
+    environment:
+      YOLO_SERVICE_URL: http://yolov8:8080
+      PORT: 3000
+    depends_on: 
+      - yolo
+    ports: 
+      - "3000:3000"
+    volumes:
+      - ./test.jpg:/app/test.jpg
+      - ./mcp_vision_adapter:/app/mcp_vision_adapter
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3ld:
+      context: ./yolov8_service     # değişmedi
+    image: mcp-yolov8:local         # ← sabit etiket
+    container_name: yolov8
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8501:8501"
+    volumes:
+      - ./models:/weights
+      - ./models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  adapter:
+    build: .
+    environment:
+      YOLO_SERVICE_URL: http://yolov8:8080   # container_name’e göre güncelledik
+    depends_on: [ yolo ]
+    ports: ["3000:3000"]
+    volumes:
+      - ./test.jpg:/app/test.jpg
+

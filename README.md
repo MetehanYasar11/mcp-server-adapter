@@ -1,105 +1,202 @@
 
 
 
-# MCP Vision Adapter
+# 🎯 MCP Vision Adapter for N8N
 
 <p align="center">
-  <img src="https://img.shields.io/badge/MCP%20Protocol-2024--03--26-blue" alt="MCP Protocol Version"/>
-  <img src="https://img.shields.io/badge/Universal%20CLI%20Adapter-hub%20for%20LLMs-orange" alt="Universal CLI Adapter"/>
-  <img src="https://img.shields.io/badge/REST%20%2B%20STDIO-API-green" alt="REST + STDIO API"/>
-  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License"/>
+  <img src="https://img.shields.io/badge/N8N%20MCP%20Client-Ready-blue?style=for-the-badge" alt="N8N Compatible"/>
+  <img src="https://img.shields.io/badge/SSE%20Transport-Optimized-green?style=for-the-badge" alt="SSE Transport"/>
+  <img src="https://img.shields.io/badge/Docker-One%20Command-orange?style=for-the-badge" alt="Docker Ready"/>
+  <img src="https://img.shields.io/badge/Ultralytics-YOLOv8-red?style=for-the-badge" alt="YOLOv8"/>
 </p>
 
-<h3 align="center">MCP Service for Oldies but Goldies</h3>
+<h2 align="center">🚀 N8N ile YOLO Object Detection - Tek Komutla Hazır!</h2>
 
-**MCP Vision Adapter** is a universal, open-source MCP (Model Context Protocol) adapter for all CLI projects. It is designed to modernize and connect your classic automations, scripts, and detection tools to LLM/agent ecosystems—no matter how old or gold they are!
+**MCP Vision Adapter**, N8N kullanıcılarının **MCP Client Tool** ile **Ultralytics YOLO** modellerini anında çalıştırabilmesi için tasarlanmış profesyonel Docker çözümüdür.
 
-> "Turn your legacy CLI automations into LLM/agent tools. If your software has a CLI, you can make it an agent tool—no rewrite required."
-
-This repo demonstrates a reference implementation using Ultralytics YOLOv8 (with CLI support) as an example service. You can register your own custom YOLOv8 models or any CLI-based tool as an agent tool and get detection results, comments, or outputs directly in your LLM workflows.
-
-**MCP Protocol Version:** `2024-03-26`  
-**Standard:** [Model Context Protocol (MCP)](https://github.com/microsoft/model-context-protocol)
+<p align="center">
+  <img src="yolov8_service_ui.png" alt="YOLO Service UI" width="600"/>
+</p>
 
 ---
 
+## ⚡ Hızlı Başlangıç
+
+### 1️⃣ Repo'yu İndir ve Başlat
+```bash
+git clone https://github.com/MetehanYasar11/mcp-server-adapter.git
+cd mcp-server-adapter
+docker-compose up -d
+```
+
+### 2️⃣ N8N'de MCP Client Tool Ayarları
+N8N workflow'unda **MCP Client Tool** node'u ekleyin:
+
+- **Connection Type**: `Server-Sent Events (SSE)`
+- **SSE Endpoint**: `http://mcp-vision-adapter:3000/sse`
+- **Authentication**: `None`
+
+> **Docker Network**: N8N container'ınızı `mcp_network`'e bağladığınızdan emin olun.
+
+### 3️⃣ Test Edin! 🎉
+N8N'de artık şu MCP araçlarını kullanabilirsiniz:
+- `detect_objects` - Görüntülerde nesne tespiti
+- `yolo_cli` - Gelişmiş YOLO komutları
+
 ---
 
-## 🚀 Key Features
+## 🏗️ Sistem Mimarisi
 
-- **Ultralytics YOLOv8 Integration:** Fast and accurate object detection, segmentation, and pose estimation.
-- **REST & STDIO API:** Easy integration via both HTTP/REST and stdio.
-- **Web UI for Model Management:** Built-in Streamlit interface to load, swap, manage models, and view live results.
-- **VS Code Copilot Agent Mode:** Native integration with VS Code, automated tests, and code assistant support.
-- **Easy Docker & Compose Setup:** Spin up all services with a single command.
-- **Fully Open Source & MIT Licensed:** Free for commercial and personal use, easy to extend.
-- **Comprehensive Testing:** End-to-end tests with pytest, sample images, and automation.
-- **Video & Image Support:** Analyze videos by time range or frame, as well as images.
-- **Model Hot-Swap:** Swap model files on a running service without downtime.
-- **Extensible API:** Easily add new endpoints and capabilities.
-- **Ultralytics CLI Support:** Execute any `ultralytics` command through the `yolo_cli` tool.
-
----
-
-
-## 🚦 Quick Start
-
-You can run the MCP Adapter and YOLOv8 service in three ways:
-
-### 1. Virtual Environment (Recommended for Dev)
-
-**Step 1:** Create and activate a virtual environment (venv or conda)
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-# or with conda
-conda create -n mcp python=3.10
-conda activate mcp
 ```
-**Step 2:** Install dependencies
-```powershell
-pip install -r yolov8_service/requirements.txt
-pip install -e .
-```
-**Step 3:** Start YOLOv8 service
-```powershell
-cd yolov8_service
-uvicorn app.main:app --host 0.0.0.0 --port 8080
-# (Optional) Streamlit UI: streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
-```
-**Step 4:** Start MCP Adapter
-```powershell
-cd ..
-uvicorn mcp_vision_adapter.main:app --port 3000
-```
-
-### 2. Docker Based (YOLOv8 + Adapter)
-
-**Step 1:** Build and run both services with Docker Compose
-```powershell
-docker-compose up --build
-```
-- YOLOv8 service: [http://localhost:8080](http://localhost:8080)
-- Adapter: [http://localhost:3000](http://localhost:3000)
-- Streamlit UI: [http://localhost:8501](http://localhost:8501)
-
-### 3. All-in-One: Just Docker Compose!
-
-The provided `docker-compose.yml` launches both YOLOv8 and MCP Adapter, with all ports mapped and model management UI enabled. Just run:
-```powershell
-docker-compose up --build
+┌─────────────┐    SSE/HTTP    ┌─────────────────┐    REST API    ┌─────────────┐
+│   N8N       │ ◄────────────► │ MCP Vision      │ ◄────────────► │ YOLO        │
+│ Workflows   │                │ Adapter         │                │ Service     │
+│             │                │ (Node.js)       │                │ (FastAPI)   │
+└─────────────┘                └─────────────────┘                └─────────────┘
+      │                               │                                    │
+      │                               │                                    │
+      ▼                               ▼                                    ▼
+  Port 5678                      Port 3000                          Port 8080/8501
+                                                                   (API + Streamlit)
 ```
 
 ---
 
-#### Test YOLOv8 Service
-```powershell
+## 🛠️ Özellikler
+
+### 🔥 N8N Entegrasyonu
+- ✅ **MCP Protocol 2024-03-26** standardı
+- ✅ **Server-Sent Events (SSE)** transport katmanı
+- ✅ **Zero-config** N8N bağlantısı
+- ✅ **Real-time** görüntü işleme
+
+### 🤖 Ultralytics YOLO
+- ✅ **YOLOv8n/s/m/l/x** model desteği
+- ✅ **Object Detection** ve **Instance Segmentation**
+- ✅ **Custom model** yükleme imkanı
+- ✅ **Streamlit Web UI** ile görsel yönetim
+
+### 🐳 Docker Optimizasyonu
+---
+
+## 📋 MCP Tools ve Kullanım
+
+### 🎯 `detect_objects`
+Görüntülerde nesne tespiti yapar:
+
+```json
+{
+  "tool": "detect_objects",
+  "input": {
+    "image_path": "/path/to/image.jpg",
+    "confidence": 0.5,
+    "model": "yolov8n.pt"
+  }
+}
+```
+
+### ⚡ `yolo_cli`
+Gelişmiş YOLO komutları çalıştırır:
+
+```json
+{
+  "tool": "yolo_cli", 
+  "input": {
+    "command": "yolo predict model=yolov8s.pt source=image.jpg save=true"
+  }
+}
+```
+
+---
+
+## � Kurulum Detayları
+
+### Docker Network Bağlantısı
+
+N8N'i doğru network'e bağlamak için:
+
+```bash
+# N8N container'ını MCP network'e bağla
+docker network connect mcp_network <n8n_container_name>
+
+# Veya N8N'i compose ile başlatırken:
+# docker-compose.yml dosyanızda networks: [mcp_network] ekleyin
+```
+
+### Manuel Test
+
+```bash
+# MCP Adapter sağlık kontrolü
+curl http://localhost:3000/health
+
+# YOLO Service test
 curl -F file=@test.jpg http://localhost:8080/detect
+
+# N8N'den MCP test (container içinden)
+docker exec n8n curl http://mcp-vision-adapter:3000/health
 ```
 
-#### Test Adapter (proxies to YOLO)
-```powershell
-Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"detect_objects","input":{"image_path":"test.jpg"}}'
+---
+
+## 🎨 Streamlit Web UI
+
+YOLO modellerinizi görsel olarak yönetmek için:
+
+- **URL**: http://localhost:8501
+- **Model yükleme/değiştirme**
+- **Canlı görüntü analizi**
+- **Batch işleme**
+
+---
+
+## ⚙️ Konfigürasyon
+
+### Environment Variables
+
+```bash
+# MCP Adapter
+PORT=3000
+YOLO_SERVICE_URL=http://yolo:8080
+
+# YOLO Service  
+YOLO_MODEL_PATH=/weights/yolov8n.pt
+UPLOAD_DIR=/tmp/uploads
+```
+
+### Custom Models
+
+```bash
+# models/ klasörüne kendi modelinizi ekleyin
+cp my_custom_yolo.pt models/
+```
+
+Docker Compose otomatik olarak modelleri container'a mount eder.
+
+---
+
+## 🧪 Test ve Geliştirme
+
+### Test Çalıştırma
+
+```bash
+# Tüm testler
+pytest tests/ -v
+
+# Specific test
+pytest tests/test_manual.py -v
+
+# MCP protocol test
+pytest tests/test_protocol.py -v
+```
+
+### Debug Mode
+
+```bash
+# Adapter'ı debug mode'da çalıştır
+DEBUG=1 docker-compose up
+
+# Logları takip et
+docker-compose logs -f mcp-vision-adapter
 ```
 
 #### Run Any Ultralytics CLI Command
@@ -120,67 +217,55 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-## 🛣️ Roadmap & Future Updates
+---
 
-- **Hotfix:** VS Code Copilot tool execution via STDIO is currently not supported. Use HTTP API for now. This will be fixed soon.
-- **Upcoming:**
-  - **n8n Example Automation:** A ready-to-use n8n template and a short usage video will be added.
-  - **Complete Ultralytics Service:** Full support for pose and segmentation tasks, including time-sliced video analysis, coming within 2 weeks. This repo is a reference CLI-to-MCP service.
-  - **v2: Automation Agent:** An OpenAI model will be integrated, enabling agent-based automation as a service. This will allow connecting automations as services—stay tuned!
+## 🤝 Katkı ve Destek
+
+### 💡 Issue Bildirimi
+- **Bug Report**: GitHub Issues'da detaylı açıklama ile bildirin
+- **Feature Request**: Yeni özellik önerileri hoş karşılanır
+- **N8N Integration**: N8N ile ilgili problemler için log'ları ekleyin
+
+### � Geliştirme
+```bash
+# Fork repo
+git clone https://github.com/YOUR_USERNAME/mcp-server-adapter.git
+cd mcp-server-adapter
+
+# Branch oluştur
+git checkout -b feature/your-feature
+
+# Test ve commit
+pytest tests/ -v
+git commit -m "feat: your awesome feature"
+git push origin feature/your-feature
+```
+
+### 📞 İletişim
+- **GitHub Issues**: Teknik problemler için
+- **Discussions**: Genel sorular ve öneriler için
 
 ---
 
-## 🛠️ Custom Service Integration Tutorial
+## 📄 Lisans
 
-To connect your own service or tool as an adapter:
+Bu proje **MIT Lisansı** ile lisanslanmıştır - detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
-1. Implement a REST or STDIO interface that matches the MCP protocol (see `mcp_vision_adapter/main.py`).
-2. Register your service in `.vscode/mcp.json` or your orchestrator.
-3. Use the HTTP API for best compatibility:
-   ```powershell
-   Invoke-RestMethod -Uri "http://localhost:3000/execute" -Method Post -ContentType "application/json" -Body '{"tool":"your_tool","input":{...}}'
-   ```
-4. For advanced use, see the test suite and example adapters.
+### 🙏 Teşekkürler
+
+- **[Ultralytics](https://ultralytics.com/)** - YOLOv8 modelleri için
+- **[N8N](https://n8n.io/)** - Workflow automation platform
+- **[Microsoft](https://github.com/microsoft/model-context-protocol)** - Model Context Protocol standardı için
 
 ---
 
-### HTTP/SSE Mode
-```
-uvicorn mcp_vision_adapter.main:app --port 3000
-```
+<p align="center">
+  <strong>⭐ Beğendiyseniz star verin | 🍴 Fork'layın | 🐛 Issue açın</strong>
+</p>
 
----
-
-## 🦾 YOLOv8 Microservice
-
-See [`yolov8_service/README.md`](yolov8_service/README.md) for advanced usage and details.
-
-**Mount your model folder:**
-```powershell
-docker run -v ${PWD}/models:/weights ...
-```
-Default weights file: `/weights/yolov8n.pt`
-
----
-
-## 🧩 VS Code MCP Integration
-
-Example `.vscode/mcp.json`:
-```jsonc
-{
-  "servers": {
-    "vision-http": {
-      "type": "http",
-      "url": "http://127.0.0.1:3000"
-    },
-    "vision-stdio": {
-      "type": "stdio",
-      "command": "python",
-      "args": ["-m", "mcp_vision_adapter.main"]
-    }
-  }
-}
-```
+<p align="center">
+  Made with ❤️ for N8N Community
+</p>
 
 ---
 
